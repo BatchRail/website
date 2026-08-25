@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BatchRail — Batch Settlement for x402 Micropayments</title>
+  <meta name="description" content="BatchRail makes batch-settlement the default for high-volume x402 micropayments. Cut settlement costs 90%+ with AI risk scoring, managed channels, and optional LP float." />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="canonical" href="https://batchrail.io/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="BatchRail — Batch Settlement for x402" />
+  <meta property="og:description" content="Cut settlement costs 90%+ while keeping atomic-like safety. AI-powered risk scoring + managed channels for high-volume micropayments." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://batchrail.io/" />
+
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-elevated: #12121a;
+      --bg-card: #16161f;
+      --border: #27272a;
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --accent: #22d3ee;
+      --accent-dim: #0891b2;
+      --accent-glow: rgba(34, 211, 238, 0.15);
+      --success: #34d399;
+      --danger: #f87171;
+      --radius: 12px;
+      --font: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Nav */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo span {
+      color: var(--accent);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0f;
+    }
+    .btn-primary:hover {
+      background: #67e8f9;
+      text-decoration: none;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 5.5rem 0 4.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 500px;
+      background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      max-width: 780px;
+      margin: 0 auto 1.25rem;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent), #67e8f9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 2.25rem;
+      line-height: 1.65;
+    }
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Sections */
+    section {
+      padding: 4.5rem 0;
+    }
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Problem / Solution */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+    }
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card ul {
+      list-style: none;
+    }
+    .card li {
+      position: relative;
+      padding-left: 1.35rem;
+      margin-bottom: 0.7rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+    .card li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .card.problem li::before {
+      background: var(--danger);
+    }
+    .card.solution li::before {
+      background: var(--success);
+    }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .feature {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color 0.15s;
+    }
+    .feature:hover {
+      border-color: #3f3f46;
+    }
+    .feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--accent-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .feature h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .feature p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Waitlist */
+    .waitlist {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.75rem 2rem;
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .waitlist h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .waitlist p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 0.6rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .waitlist-form input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .waitlist-form input:focus {
+      border-color: var(--accent);
+    }
+    .waitlist-form input::placeholder {
+      color: #52525b;
+    }
+    .form-note {
+      font-size: 0.75rem;
+      color: #52525b;
+      margin-top: 0.85rem;
+    }
+    #form-status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    #form-status.success {
+      color: var(--success);
+    }
+    #form-status.error {
+      color: var(--danger);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 0;
+      margin-top: 2rem;
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .footer-links a:hover {
+      color: var(--text);
+    }
+    .copyright {
+      font-size: 0.8rem;
+      color: #52525b;
+    }
+
+    @media (max-width: 640px) {
+      .nav-links a:not(.btn) {
+        display: none;
+      }
+      .hero {
+        padding: 3.5rem 0 3rem;
+      }
+      .waitlist-form {
+        flex-direction: column;
+      }
+      .hero-stats {
+        gap: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a href="/" class="logo">Batch<span>Rail</span></a>
+      <div class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#features">Features</a>
+        <a href="https://github.com/BatchRail" target="_blank" rel="noopener">GitHub</a>
+        <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Built for x402 · Base first
+      </div>
+      <h1>
+        Batch settlement that<br />
+        <span class="highlight">captures 90%+ of GMV</span>
+      </h1>
+      <p class="hero-sub">
+        High-volume micropayments shouldn’t lose 30–40% to per-settlement fees.
+        BatchRail makes batch-settlement the default — with AI risk scoring,
+        managed channels, and optional LP float.
+      </p>
+      <div class="hero-cta">
+        <a href="#waitlist" class="btn btn-primary">Join the Waitlist</a>
+        <a href="https://github.com/BatchRail" class="btn btn-ghost" target="_blank" rel="noopener">
+          View on GitHub →
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-value">90–99%</div>
+          <div class="stat-label">Cost reduction vs exact</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1M+</div>
+          <div class="stat-label">x402 txns / day already</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">HTTP-speed</div>
+          <div class="stat-label">No large capital lock</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="problem">
+    <div class="container">
+      <div class="section-label">The Problem</div>
+      <h2 class="section-title">Exact settlement is eating the margin</h2>
+      <p class="section-desc">
+        x402 volume is real. Average transaction sizes of ~$0.023–$0.031 mean a $0.001 facilitator fee consumes 32–43% of GMV.
+      </p>
+      <div class="grid-2">
+        <div class="card problem">
+          <h3>🔴 Why batch isn’t winning yet</h3>
+          <ul>
+            <li>Counterparty risk blocks adoption</li>
+            <li>Tooling friction and accounting overhead</li>
+            <li>No durable channel state out of the box</li>
+            <li>Background claim / settle / refund is operationally heavy</li>
+            <li>Merchants must lock capital or take credit risk</li>
+          </ul>
+        </div>
+        <div class="card solution">
+          <h3>🟢 What BatchRail changes</h3>
+          <ul>
+            <li>Hosted batch facilitator endpoints (x402 v2 compatible)</li>
+            <li>Managed Channel Manager as a Service</li>
+            <li>Real-time Grok risk scoring & credit limits</li>
+            <li>Bot swarm for monitoring, claims, reconciliation</li>
+            <li>Optional LP-backed float so agents stay capital-light</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solution">
+    <div class="container">
+      <div class="section-label">The Solution</div>
+      <h2 class="section-title">Batch-settlement as the default</h2>
+      <p class="section-desc">
+        Buyer deposits once into escrow, signs cumulative off-chain vouchers, seller claims in bulk.
+        BatchRail runs the hard parts so merchants capture nearly all GMV.
+      </p>
+      <div class="features-grid" id="features">
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <h3>Hosted Facilitator</h3>
+          <p>/supported, /verify, /settle — fully compatible with x402 v2. Base first, then multi-EVM.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔗</div>
+          <h3>Managed Channels</h3>
+          <p>Register routes once. We run claim/settle/refund loops with durable state and automatic top-ups.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🧠</div>
+          <h3>AI Risk Scoring</h3>
+          <p>Wallet age, volume history, success rate → dynamic deposit multipliers and credit limits via Grok.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🤖</div>
+          <h3>Bot Swarm</h3>
+          <p>Always-on agents for watching, claiming, delivery verification, reputation, and anomaly response.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💰</div>
+          <h3>Optional LP Float</h3>
+          <p>Credit enhancement and shared channels so high-reputation agents operate without large deposits.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <h3>Merchant Dashboard</h3>
+          <p>Channels, balances, claims, risk scores, fee P&amp;L vs exact scheme — one-click enable batch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="waitlist">
+    <div class="container">
+      <div class="waitlist">
+        <h2>Join the waitlist</h2>
+        <p>Be first to pilot BatchRail. Early access for high-volume x402 merchants and agent builders.</p>
+        <form class="waitlist-form" id="waitlist-form" onsubmit="return handleSubmit(event)">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@company.com"
+            required
+            autocomplete="email"
+          />
+          <button type="submit" class="btn btn-primary">Notify me</button>
+        </form>
+        <p class="form-note">No spam. We’ll only email about launch and pilot openings.</p>
+        <div id="form-status"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="logo">Batch<span>Rail</span></div>
+      <div class="footer-links">
+        <a href="https://github.com/BatchRail" target="_blank" rel="noopener">GitHub</a>
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#waitlist">Waitlist</a>
+      </div>
+      <div class="copyright">© 2026 BatchRail. Built for agentic commerce.</div>
+    </div>
+  </footer>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const status = document.getElementById("form-status");
+
+      if (!email || !email.includes("@")) {
+        status.textContent = "Please enter a valid email.";
+        status.className = "error";
+        return false;
+      }
+
+      // Placeholder — replace with your form endpoint (Formspree, Basin, custom API, etc.)
+      // Example Formspree: fetch("https://formspree.io/f/YOUR_ID", { method: "POST", body: new FormData(e.target), headers: { Accept: "application/json" } })
+      status.textContent = "Thanks — you’re on the list. We’ll be in touch.";
+      status.className = "success";
+      document.getElementById("waitlist-form").reset();
+
+      // Optional: persist locally for demo
+      try {
+        const list = JSON.parse(localStorage.getItem("batchrail_waitlist") || "[]");
+        if (!list.includes(email)) list.push(email);
+        localStorage.setItem("batchrail_waitlist", JSON.stringify(list));
+      } catch (_) {}
+
+      return false;
+    }
+  </script>
+</body>
+</html>
