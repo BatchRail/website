@@ -36,6 +36,7 @@
     .btn-primary:hover { background: #67e8f9; text-decoration: none; }
     .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
     .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); text-decoration: none; }
+    .btn-lg { padding: 0.85rem 1.5rem; font-size: 1rem; }
     .hero { padding: 5.5rem 0 4.5rem; text-align: center; position: relative; overflow: hidden; }
     .hero::before { content: ""; position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 800px; height: 500px; background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%); pointer-events: none; }
     .hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 999px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; }
@@ -79,13 +80,7 @@
     .waitlist { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 2.75rem 2rem; text-align: center; max-width: 560px; margin: 0 auto; }
     .waitlist h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
     .waitlist p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
-    .waitlist-form { display: flex; gap: 0.6rem; max-width: 400px; margin: 0 auto; }
-    .waitlist-form input { flex: 1; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.95rem; outline: none; }
-    .waitlist-form input:focus { border-color: var(--accent); }
-    .form-note { font-size: 0.75rem; color: #52525b; margin-top: 0.85rem; }
-    #form-status { margin-top: 1rem; font-size: 0.9rem; min-height: 1.4em; }
-    #form-status.success { color: var(--success); }
-    #form-status.error { color: var(--danger); }
+    .form-note { font-size: 0.75rem; color: #52525b; margin-top: 1rem; }
     footer { border-top: 1px solid var(--border); padding: 2.5rem 0; margin-top: 2rem; }
     .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
     .footer-links { display: flex; gap: 1.5rem; }
@@ -94,7 +89,6 @@
     @media (max-width: 640px) {
       .nav-links a:not(.btn) { display: none; }
       .hero { padding: 3.5rem 0 3rem; }
-      .waitlist-form { flex-direction: column; }
     }
   </style>
 </head>
@@ -108,7 +102,7 @@
         <a href="#facilitator">Facilitator</a>
         <a href="/docs/hosted-facilitator.html">Docs</a>
         <a href="https://github.com/BatchRail" target="_blank" rel="noopener">GitHub</a>
-        <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+        <a href="https://tally.so/r/ZjrGjy" class="btn btn-primary" target="_blank" rel="noopener">Join Waitlist</a>
       </div>
     </div>
   </nav>
@@ -202,12 +196,8 @@
       <div class="waitlist">
         <h2>Join the waitlist</h2>
         <p>Early access for high-volume x402 merchants and agent builders.</p>
-        <form class="waitlist-form" id="waitlist-form" onsubmit="return handleSubmit(event)">
-          <input type="email" id="email" name="email" placeholder="you@company.com" required autocomplete="email" />
-          <button type="submit" class="btn btn-primary">Notify me</button>
-        </form>
-        <p class="form-note">No spam. We’ll only email about launch and pilot openings.</p>
-        <div id="form-status"></div>
+        <a href="https://tally.so/r/ZjrGjy" class="btn btn-primary btn-lg" target="_blank" rel="noopener">Join Waitlist</a>
+        <p class="form-note">Opens a short form. No spam — launch and pilot updates only.</p>
       </div>
     </div>
   </section>
@@ -219,32 +209,10 @@
         <a href="https://github.com/BatchRail" target="_blank" rel="noopener">GitHub</a>
         <a href="/docs/hosted-facilitator.html">Docs</a>
         <a href="https://facilitator.batchrail.io/health" target="_blank" rel="noopener">Facilitator</a>
-        <a href="#waitlist">Waitlist</a>
+        <a href="https://tally.so/r/ZjrGjy" target="_blank" rel="noopener">Waitlist</a>
       </div>
       <div class="copyright">© 2026 BatchRail. Built for agentic commerce.</div>
     </div>
   </footer>
-
-  <script>
-    function handleSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const status = document.getElementById("form-status");
-      if (!email || !email.includes("@")) {
-        status.textContent = "Please enter a valid email.";
-        status.className = "error";
-        return false;
-      }
-      status.textContent = "Thanks — you’re on the list. We’ll be in touch.";
-      status.className = "success";
-      document.getElementById("waitlist-form").reset();
-      try {
-        const list = JSON.parse(localStorage.getItem("batchrail_waitlist") || "[]");
-        if (!list.includes(email)) list.push(email);
-        localStorage.setItem("batchrail_waitlist", JSON.stringify(list));
-      } catch (_) {}
-      return false;
-    }
-  </script>
 </body>
 </html>
