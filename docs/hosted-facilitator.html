@@ -69,11 +69,13 @@
       <thead><tr><th>Path</th><th>Meaning</th></tr></thead>
       <tbody>
         <tr><td><a href="https://facilitator.batchrail.io/health">/health</a></td><td>Service is up; basic network info</td></tr>
+        <tr><td><a href="https://facilitator.batchrail.io/stats">/stats</a></td><td>Public aggregate usage counters</td></tr>
         <tr><td><a href="https://facilitator.batchrail.io/supported">/supported</a></td><td>Schemes &amp; networks this facilitator supports</td></tr>
         <tr><td><code>POST /verify</code></td><td>Check a payment payload without spending gas</td></tr>
         <tr><td><code>POST /settle</code></td><td>Submit deposit / claim / settle / refund on-chain</td></tr>
       </tbody>
     </table>
+    <p>Stats: <a href="https://facilitator.batchrail.io/stats">https://facilitator.batchrail.io/stats</a></p>
 
     <h2>Minimal resource server</h2>
     <pre>import { HTTPFacilitatorClient } from "@x402/core/server";
@@ -102,7 +104,7 @@ const resourceServer = new x402ResourceServer(facilitatorClient)
     <p>USDC (Base Sepolia): <code>0x036CbD53842c5426634e7929541eC2318f3dCF7e</code></p>
 
     <h2>Optional API key</h2>
-    <p>If the operator enables <code>API_KEY</code>, send <code>X-API-Key: …</code> or <code>Authorization: Bearer …</code>. <code>/health</code> stays public. Until that env var is set, the demo remains open.</p>
+    <p>If the operator enables <code>API_KEY</code>, send <code>X-API-Key: …</code> or <code>Authorization: Bearer …</code>. <code>/health</code> and <code>/stats</code> stay public. Until that env var is set, the demo remains open.</p>
   </div>
 </body>
 </html>
