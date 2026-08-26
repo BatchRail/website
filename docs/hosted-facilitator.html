@@ -61,6 +61,14 @@
       Do not use mainnet funds here.
     </div>
 
+    <h2>Try a paid call (testnet)</h2>
+    <p>Live example resource — no repo clone required:</p>
+    <ul>
+      <li>Health: <a href="https://demo-resource-production.up.railway.app/health" target="_blank" rel="noopener">/health</a></li>
+      <li>Paid route: <a href="https://demo-resource-production.up.railway.app/weather" target="_blank" rel="noopener">GET /weather</a></li>
+    </ul>
+    <p>A normal browser gets <strong style="color:var(--text)">HTTP 402</strong> (expected). An x402 client pays with <strong style="color:var(--text)">Base Sepolia test USDC</strong> (batch-settlement), retries, and receives a small JSON payload. Uses <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a>.</p>
+
     <h2>Env vars (yours)</h2>
     <pre>FACILITATOR_URL=https://facilitator.batchrail.io
 EVM_ADDRESS=0xYourReceiveAddressOnBaseSepolia</pre>
