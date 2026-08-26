@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hosted facilitator — BatchRail</title>
-  <meta name="description" content="How to use the public BatchRail x402 facilitator on Base Sepolia." />
+  <meta name="description" content="Copy-paste x402 batch-settlement seller setup on Base Sepolia with BatchRail facilitator." />
   <meta name="theme-color" content="#0a0a0f" />
   <link rel="canonical" href="https://batchrail.io/docs/hosted-facilitator.html" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <style>
     :root {
       --bg: #0a0a0f; --card: #16161f; --border: #27272a; --text: #fafafa;
@@ -23,17 +24,17 @@
     .logo { font-weight: 700; color: var(--text); }
     .logo span { color: var(--accent); }
     h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
-    .lead { color: var(--muted); margin-bottom: 2rem; }
     h2 { font-size: 1.15rem; margin: 2rem 0 0.75rem; }
-    p, li { color: var(--muted); font-size: 0.95rem; }
+    .lead, p, li { color: var(--muted); font-size: 0.95rem; }
+    .lead { margin-bottom: 1.5rem; }
     ul { padding-left: 1.25rem; margin: 0.5rem 0 1rem; }
     li { margin-bottom: 0.35rem; }
     code, pre {
-      font-family: var(--mono); font-size: 0.85rem;
+      font-family: var(--mono); font-size: 0.82rem;
       background: var(--card); border: 1px solid var(--border); border-radius: 8px;
     }
     code { padding: 0.15rem 0.4rem; }
-    pre { padding: 1rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; color: var(--text); }
+    pre { padding: 1rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; color: var(--text); white-space: pre; }
     .note {
       border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.15rem;
       background: var(--card); margin: 1.25rem 0;
@@ -52,59 +53,97 @@
     </nav>
 
     <h1>Hosted facilitator (Base Sepolia)</h1>
-    <p class="lead">How to use the public test facilitator at <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a>.</p>
+    <p class="lead">Copy-paste seller setup for x402 <strong style="color:var(--text)">batch-settlement</strong>. Public demo at <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a>. Public builder: Capt. Riker (<a href="https://x.com/BatchRail" target="_blank" rel="noopener">@BatchRail</a>).</p>
 
     <div class="note">
       <strong>Testnet only.</strong> Network <code>eip155:84532</code>.
-      No API key required for the current public demo.
-      The facilitator wallet pays gas for relayed on-chain actions.
+      No API key on the public demo. Facilitator pays gas for relayed txs.
+      Do not use mainnet funds here.
     </div>
 
-    <h2>Required config</h2>
-    <pre>FACILITATOR_URL=https://facilitator.batchrail.io</pre>
-    <p>Use network <code>eip155:84532</code> in your payment requirements.</p>
+    <h2>Env vars (yours)</h2>
+    <pre>FACILITATOR_URL=https://facilitator.batchrail.io
+EVM_ADDRESS=0xYourReceiveAddressOnBaseSepolia</pre>
+    <p>You never need BatchRail private keys. <code>EVM_ADDRESS</code> is <em>your</em> pay-to wallet.</p>
 
     <h2>Endpoints</h2>
     <table>
       <thead><tr><th>Path</th><th>Meaning</th></tr></thead>
       <tbody>
-        <tr><td><a href="https://facilitator.batchrail.io/health">/health</a></td><td>Service is up; basic network info</td></tr>
-        <tr><td><a href="https://facilitator.batchrail.io/stats">/stats</a></td><td>Public aggregate usage counters</td></tr>
-        <tr><td><a href="https://facilitator.batchrail.io/supported">/supported</a></td><td>Schemes &amp; networks this facilitator supports</td></tr>
-        <tr><td><code>POST /verify</code></td><td>Check a payment payload without spending gas</td></tr>
-        <tr><td><code>POST /settle</code></td><td>Submit deposit / claim / settle / refund on-chain</td></tr>
+        <tr><td><a href="https://facilitator.batchrail.io/health">/health</a></td><td>Service up</td></tr>
+        <tr><td><a href="https://facilitator.batchrail.io/stats">/stats</a></td><td>Public usage counters</td></tr>
+        <tr><td><a href="https://facilitator.batchrail.io/supported">/supported</a></td><td>Schemes &amp; networks</td></tr>
+        <tr><td><code>POST /verify</code></td><td>Verify payment</td></tr>
+        <tr><td><code>POST /settle</code></td><td>On-chain settle</td></tr>
       </tbody>
     </table>
-    <p>Stats: <a href="https://facilitator.batchrail.io/stats">https://facilitator.batchrail.io/stats</a></p>
 
-    <h2>Minimal resource server</h2>
-    <pre>import { HTTPFacilitatorClient } from "@x402/core/server";
+    <h2>1. Minimal Express — one protected route</h2>
+    <pre>import express from "express";
+import { paymentMiddlewareFromHTTP, x402ResourceServer } from "@x402/express";
+import { HTTPFacilitatorClient } from "@x402/core/server";
 import { BatchSettlementEvmScheme } from "@x402/evm/batch-settlement/server";
-import { x402ResourceServer } from "@x402/express";
 
-const NETWORK = "eip155:84532";
-const payTo = process.env.EVM_ADDRESS; // your receive address
+const NETWORK = "eip155:84532"; // Base Sepolia testnet
+const payTo = process.env.EVM_ADDRESS;
 
 const facilitatorClient = new HTTPFacilitatorClient({
-  url: "https://facilitator.batchrail.io",
+  url: process.env.FACILITATOR_URL ?? "https://facilitator.batchrail.io",
 });
 
 const batchScheme = new BatchSettlementEvmScheme(payTo);
 const resourceServer = new x402ResourceServer(facilitatorClient)
-  .register(NETWORK, batchScheme);</pre>
-    <p>Protect routes with <code>scheme: "batch-settlement"</code>, <code>network: "eip155:84532"</code>, and your <code>payTo</code>.</p>
+  .register(NETWORK, batchScheme);
+
+const app = express();
+
+app.get(
+  "/weather",
+  paymentMiddlewareFromHTTP(
+    {
+      accept: [{
+        scheme: "batch-settlement",
+        network: NETWORK,
+        payTo,
+        maxAmountRequired: "10000",
+        resource: "https://your-host.example/weather",
+        description: "Test weather (Base Sepolia)",
+        mimeType: "application/json",
+      }],
+    },
+    resourceServer
+  ),
+  (_req, res) => res.json({ ok: true, note: "paid on testnet" })
+);
+
+app.listen(4021);</pre>
     <p>Full examples: <a href="https://github.com/BatchRail/core">github.com/BatchRail/core</a>.</p>
+
+    <h2>2. MCP / agent-tool sellers</h2>
+    <p>Same facilitator. One paid tool endpoint on Base Sepolia:</p>
+    <pre>FACILITATOR_URL=https://facilitator.batchrail.io
+EVM_ADDRESS=0xYourAddress
+NETWORK=eip155:84532   // testnet only
+
+// On tool call:
+// 1) 402 + batch-settlement requirements (network + payTo)
+// 2) verify/settle via FACILITATOR_URL
+// 3) run tool, return result</pre>
+    <p>Use the same <code>BatchSettlementEvmScheme</code> + <code>HTTPFacilitatorClient</code> as Express; only the MCP/HTTP adapter differs.</p>
+    <div class="note">
+      <strong>Testnet warning.</strong> No mainnet. Test USDC only.
+      Do not ship production keys in a public demo client.
+    </div>
 
     <h2>Gas &amp; wallets</h2>
     <ul>
-      <li><strong>Facilitator</strong> — operator wallet; pays Base Sepolia gas</li>
-      <li><strong>payTo</strong> — your address; receives settled USDC (no ETH required)</li>
-      <li><strong>Payer / client</strong> — needs Base Sepolia USDC to open a channel</li>
+      <li><strong>Facilitator</strong> — BatchRail pays Sepolia gas</li>
+      <li><strong>Your EVM_ADDRESS</strong> — receives settled test USDC</li>
+      <li><strong>Payer / agent</strong> — needs Base Sepolia USDC to open a channel</li>
     </ul>
     <p>USDC (Base Sepolia): <code>0x036CbD53842c5426634e7929541eC2318f3dCF7e</code></p>
 
-    <h2>Optional API key</h2>
-    <p>If the operator enables <code>API_KEY</code>, send <code>X-API-Key: …</code> or <code>Authorization: Bearer …</code>. <code>/health</code> and <code>/stats</code> stay public. Until that env var is set, the demo remains open.</p>
+    <p style="margin-top:2rem">Questions → <a href="https://x.com/BatchRail" target="_blank" rel="noopener">@BatchRail</a> (Capt. Riker).</p>
   </div>
 </body>
 </html>
