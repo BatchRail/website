@@ -53,34 +53,35 @@
     </nav>
 
     <h1>Hosted facilitator (Base Sepolia)</h1>
-    <p class="lead">Copy-paste seller setup for x402 <strong style="color:var(--text)">batch-settlement</strong>. Public demo at <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a>. Public builder: Capt. Riker (<a href="https://x.com/BatchRail" target="_blank" rel="noopener">@BatchRail</a>).</p>
+    <p class="lead">The facilitator is the <strong style="color:var(--text)">rail</strong> (verify + settle). The paid weather route is a separate <strong style="color:var(--text)">example seller</strong>. Public builder: Capt. Riker (<a href="https://x.com/BatchRail" target="_blank" rel="noopener">@BatchRail</a>).</p>
 
     <div class="note">
-      <strong>Testnet only.</strong> Network <code>eip155:84532</code>.
-      No API key on the public demo. Facilitator pays gas for relayed txs.
-      Do not use mainnet funds here.
+      <strong>Two hosts.</strong> Do not call <code>facilitator.batchrail.io/weather</code> — that path does not exist.<br />
+      Rail: <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a><br />
+      Seller: <a href="https://demo-resource-production.up.railway.app/weather">demo-resource … /weather</a> (browser → 402)<br />
+      <strong>Testnet only.</strong> Network <code>eip155:84532</code>. No API key on the public demo.
     </div>
 
     <h2>Try a paid call (testnet)</h2>
-    <p>Live example resource — no repo clone required:</p>
+    <p>Live example seller — no repo clone required:</p>
     <ul>
-      <li>Health: <a href="https://demo-resource-production.up.railway.app/health" target="_blank" rel="noopener">/health</a></li>
+      <li>Seller health: <a href="https://demo-resource-production.up.railway.app/health" target="_blank" rel="noopener">demo-resource /health</a></li>
       <li>Paid route: <a href="https://demo-resource-production.up.railway.app/weather" target="_blank" rel="noopener">GET /weather</a></li>
     </ul>
-    <p>A normal browser gets <strong style="color:var(--text)">HTTP 402</strong> (expected). An x402 client pays with <strong style="color:var(--text)">Base Sepolia test USDC</strong> (batch-settlement), retries, and receives a small JSON payload. Uses <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a>.</p>
+    <p>A normal browser gets <strong style="color:var(--text)">HTTP 402</strong> (expected). An x402 client pays with <strong style="color:var(--text)">Base Sepolia test USDC</strong> (batch-settlement), retries, and receives a small JSON payload. The seller uses the rail at <a href="https://facilitator.batchrail.io">facilitator.batchrail.io</a>.</p>
 
     <h2>Env vars (yours)</h2>
     <pre>FACILITATOR_URL=https://facilitator.batchrail.io
 EVM_ADDRESS=0xYourReceiveAddressOnBaseSepolia</pre>
     <p>You never need BatchRail private keys. <code>EVM_ADDRESS</code> is <em>your</em> pay-to wallet.</p>
 
-    <h2>Endpoints</h2>
+    <h2>Facilitator endpoints (the rail)</h2>
     <table>
       <thead><tr><th>Path</th><th>Meaning</th></tr></thead>
       <tbody>
         <tr><td><a href="https://facilitator.batchrail.io/health">/health</a></td><td>Service up</td></tr>
         <tr><td><a href="https://facilitator.batchrail.io/stats">/stats</a></td><td>Public usage counters</td></tr>
-        <tr><td><a href="https://facilitator.batchrail.io/supported">/supported</a></td><td>Schemes &amp; networks</td></tr>
+        <tr><td><a href="https://facilitator.batchrail.io/supported">/supported</a></td><td>Base Sepolia schemes only</td></tr>
         <tr><td><code>POST /verify</code></td><td>Verify payment</td></tr>
         <tr><td><code>POST /settle</code></td><td>On-chain settle</td></tr>
       </tbody>
@@ -128,7 +129,7 @@ app.listen(4021);</pre>
     <p>Full examples: <a href="https://github.com/BatchRail/core">github.com/BatchRail/core</a>.</p>
 
     <h2>2. MCP / agent-tool sellers</h2>
-    <p>Same facilitator. One paid tool endpoint on Base Sepolia:</p>
+    <p>Same facilitator rail. One paid tool endpoint on Base Sepolia:</p>
     <pre>FACILITATOR_URL=https://facilitator.batchrail.io
 EVM_ADDRESS=0xYourAddress
 NETWORK=eip155:84532   // testnet only
@@ -143,7 +144,7 @@ NETWORK=eip155:84532   // testnet only
       Do not ship production keys in a public demo client.
     </div>
 
-    <h2>Gas &amp; wallets</h2>
+    <h2>Gas & wallets</h2>
     <ul>
       <li><strong>Facilitator</strong> — BatchRail pays Sepolia gas</li>
       <li><strong>Your EVM_ADDRESS</strong> — receives settled test USDC</li>
